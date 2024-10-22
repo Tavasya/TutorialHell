@@ -1,0 +1,30 @@
+
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 14rem;
+}
+
+.input{ 
+    border: 3px solid blue;
+    background-color: blue;
+    color: white;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.button{
+    background-color: hsl(120, 47%, 54%);
+    cursor: pointer;    
+    border: 3px solid;
+    border-radius: 5px;
+    transition: transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.button:hover{
+    background-color: hsl(120, 47%, 44%);
+    transform: scale(1.1);
+}
+
