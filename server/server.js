@@ -1,6 +1,13 @@
 const express = require('express');                             //handles http
 const cors = require('cors');                                   //to request youtube        
 const { YoutubeTranscript } = require('youtube-transcript');
+require('dotenv').config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+
+
+
+
 
 //Configuration and set port
 const app = express();                                          
@@ -10,6 +17,26 @@ const PORT = 5000;
 //This is used when frontend and backend are runnign on different ports
 app.use(cors());
 
+
+
+const generateQuestions = async(transcript) => {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
+
+    const prompt = "generate 3 questions based on the trascript";
+
+    try{
+        const result = await model.generateContent(prompt);
+        return result.response[0].text || "";
+    }
+    catch(error){
+        console.error("Error generative questions: ", error);
+        throw error;
+    }
+
+}
+
+
 //Creates a GET route at api/trasncript(could be named anything)
 //Async means that it will run the some code event when the ytURL hasnt processed yet
 //2 paraementer which are objects, request and response
@@ -18,6 +45,7 @@ app.use(cors());
 //THINK OF THE BACKEND AS OUR OWN API
 //so we are making a request to our backend with the youtube url
 app.get('/api/transcript', async (req, res) => {
+
 
     //bascially after selecting make questions, the url would be something like 
     //http://localhost:5000/api/transcript?url=VIDEO_ID
@@ -34,9 +62,10 @@ app.get('/api/transcript', async (req, res) => {
     try {
         // Fetch the transcript from YouTube
         const transcript = await YoutubeTranscript.fetchTranscript(ytUrl);
-
+        
+        const questions = await generateQuestions(transcript);
         // Send the transcript back to the frontend
-        res.json(transcript);
+        res.json({transcript, questions});
     } catch (error) {
         console.error('Error fetching transcript:', error);
         res.status(500).json({ error: 'Error fetching transcript' });

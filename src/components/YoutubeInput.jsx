@@ -1,15 +1,22 @@
 import { useState } from "react";
 import styles from './YoutubeInput.module.css';
 
+
+
 function YoutubeInput() {
     const [ytLink, setytLink] = useState("");
-
+    const [transcript, setTranscript] = useState("null");
+    const [questions, setQuestions] = useState([]);
+ 
     const generateQuestions = async () => {
         try {
-            // Replace 'localhost:5000' with your backend server's address
             const response = await fetch(`http://localhost:5000/api/transcript?url=${ytLink}`);
-            const transcript = await response.json();
+            const data = await response.json();
+            
+            const transcript = data;
+
             console.log(transcript); // Handle the transcript data here
+            //console.log(questions);
         } catch (error) {
             console.error("Error fetching transcript:", error);
         }
