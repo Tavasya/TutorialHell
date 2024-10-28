@@ -12,10 +12,8 @@ function YoutubeInput() {
         try {
             const response = await fetch(`http://localhost:5000/api/transcript?url=${ytLink}`);
             const data = await response.json();
-            
-            const transcript = data;
 
-            console.log(transcript); // Handle the transcript data here
+            console.log("Data: ", data); // Handle the transcript data here
             //console.log(questions);
         } catch (error) {
             console.error("Error fetching transcript:", error);

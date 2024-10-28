@@ -20,14 +20,19 @@ app.use(cors());
 
 
 const generateQuestions = async(transcript) => {
+
+    const singleTranscript = transcript.map(segment => segment.text).join(' ');
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
+    console.log("Model Initzlized:", model)
 
-    const prompt = "generate 3 questions based on the trascript";
+    const prompt = `generate me 3 questions based on this transcript: ${singleTranscript}`;
 
     try{
         const result = await model.generateContent(prompt);
-        return result.response[0].text || "";
+        const questionText = result.response.candidates[0].content.parts[0].text;
+        console.log("Question Text: ", questionText);
+        return result;
     }
     catch(error){
         console.error("Error generative questions: ", error);
@@ -64,6 +69,7 @@ app.get('/api/transcript', async (req, res) => {
         const transcript = await YoutubeTranscript.fetchTranscript(ytUrl);
         
         const questions = await generateQuestions(transcript);
+        console.log("Questions: ", questions);
         // Send the transcript back to the frontend
         res.json({transcript, questions});
     } catch (error) {
