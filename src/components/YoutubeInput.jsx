@@ -13,7 +13,16 @@ function YoutubeInput() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(`http://localhost:5000/api/transcript?url=${ytLink}`);
+            const response = await fetch(`http://localhost:5000/api/transcript`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: ytLink,
+                    parameters: buttonStates
+                })
+            });
             if (!response.ok) throw new Error("Network response was not ok");
             const data = await response.json();
 
@@ -39,7 +48,7 @@ function YoutubeInput() {
                 value={ytLink}
                 onChange={(e) => setytLink(e.target.value)}
             />
-            <button className={styles.button} type="submit" onClick={generateQuestions} disabled={loading || !ytLink}>
+            <button className={styles.button} type="button" onClick={generateQuestions} disabled={loading || !ytLink}>
                 {loading ? "Loading..." : "Make Questions"}
             </button>
             {error && <p className={styles.error}>{error}</p>}

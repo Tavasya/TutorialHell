@@ -16,6 +16,7 @@ const PORT = 5000;
 // Enable CORS (for development only)
 //This is used when frontend and backend are runnign on different ports
 app.use(cors());
+app.use(express.json());
 
 
 
@@ -51,24 +52,27 @@ const generateQuestions = async(transcript) => {
 //response is what we send to the frontend(the transcrpt) after processsing the request
 //THINK OF THE BACKEND AS OUR OWN API
 //so we are making a request to our backend with the youtube url
-app.get('/api/transcript', async (req, res) => {
+app.post('/api/transcript', async (req, res) => {
+
 
 
     //bascially after selecting make questions, the url would be something like 
     //http://localhost:5000/api/transcript?url=VIDEO_ID
     //req.queru.url grabs everythign after the question mark so specifcally the url
-    const ytUrl = req.query.url; // YouTube video ID or URL
+    const {url, parameters} = req.body; // YouTube video ID or URL
 
     //Check for missing url
-    if (!ytUrl) {
+    if (!url) {
         return res.status(400).json({ error: 'Missing YouTube URL' });
     }
+
+    console.log("Choice Button States: ", parameters);
 
 
     
     try {
         // Fetch the transcript from YouTube
-        const transcript = await YoutubeTranscript.fetchTranscript(ytUrl);
+        const transcript = await YoutubeTranscript.fetchTranscript(url);
         
         const questions = await generateQuestions(transcript);
         console.log("Questions: ", questions);
