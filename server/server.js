@@ -21,7 +21,9 @@ app.use(cors());
 
 const generateQuestions = async(transcript) => {
 
+    //turn transcript array into single string
     const singleTranscript = transcript.map(segment => segment.text).join(' ');
+
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
     console.log("Model Initzlized:", model)
@@ -32,7 +34,7 @@ const generateQuestions = async(transcript) => {
         const result = await model.generateContent(prompt);
         const questionText = result.response.candidates[0].content.parts[0].text;
         console.log("Question Text: ", questionText);
-        return result;
+        return questionText;
     }
     catch(error){
         console.error("Error generative questions: ", error);
