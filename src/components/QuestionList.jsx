@@ -1,16 +1,15 @@
 import React from "react";
+//import { useQuestions } from "./YoutubeInput";
 
-function QuestionList({questions}) {
+function QuestionList() {
+    //const { questions } = useQuestions();
+    //console.log("Check for Questions of questions Page: ", questions);
     
     return(
-        <div>
-            <h2>Generated Questions</h2>
-            <ul>
-                {questions.map((questions, index) => (
-                    <li key = {index}>{questions}</li>
-                ))}
-            </ul>
-        </div>
+        <>
+            <h3>Generated Questions</h3>
+            <h3></h3>
+        </>
     );
 }
 

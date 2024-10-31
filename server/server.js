@@ -20,21 +20,31 @@ app.use(express.json());
 
 
 
-const generateQuestions = async(transcript) => {
+const generateQuestions = async(transcript, parameters) => {
 
     //turn transcript array into single string
     const singleTranscript = transcript.map(segment => segment.text).join(' ');
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
-    console.log("Model Initzlized:", model)
 
-    const prompt = `generate me 3 questions based on this transcript: ${singleTranscript}`;
+    const prompt = `generate me 3 questions with answers in JSON format based on this transcript: ${singleTranscript} 
+                    using these paramenters: 
+                    True or False: ${parameters[0]}
+                    Multiple Choice: ${parameters[1]}
+                    Free Response: ${parameters[2]}`;
 
     try{
         const result = await model.generateContent(prompt);
+
+        //Questions
         const questionText = result.response.candidates[0].content.parts[0].text;
-        console.log("Question Text: ", questionText);
+        console.log("Generated Questions Text: ", questionText)
+
+        //Turn into JSON object
+        //const parsedQuestions = JSON.parse(questionText);
+
+
         return questionText;
     }
     catch(error){
@@ -74,8 +84,8 @@ app.post('/api/transcript', async (req, res) => {
         // Fetch the transcript from YouTube
         const transcript = await YoutubeTranscript.fetchTranscript(url);
         
-        const questions = await generateQuestions(transcript);
-        console.log("Questions: ", questions);
+        const questions = await generateQuestions(transcript, parameters);
+
         // Send the transcript back to the frontend
         res.json({transcript, questions});
     } catch (error) {

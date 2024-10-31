@@ -1,13 +1,30 @@
-import { useState } from "react";
+import { useState, createContext, useContext ,useEffect } from "react";
 import styles from './YoutubeInput.module.css';
+import { useNavigate } from "react-router-dom";
+import { QuestionsContext } from "../context/QuestionsContext";
+
+
+
+
 
 function YoutubeInput() {
+    const navigate = useNavigate();
     const [ytLink, setytLink] = useState("");
-    const [transcript, setTranscript] = useState(null);
-    const [questions, setQuestions] = useState([]);
+    const [ transcript, setTranscript] = useState(null);
+    const { questions, setQuestions } = useContext(QuestionsContext);
     const [buttonStates, setButtonStates] = useState([false, false, false]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+
+    useEffect(() => {
+        if(transcript && questions.length){
+            navigate("/questions");
+        }
+    }, [transcript, questions, navigate]);
+
+
+
 
     const generateQuestions = async () => {
         setLoading(true);
@@ -23,11 +40,32 @@ function YoutubeInput() {
                     parameters: buttonStates
                 })
             });
+
+
             if (!response.ok) throw new Error("Network response was not ok");
             const data = await response.json();
 
             setTranscript(data.transcript); // Set the transcript data here
-            setQuestions(data.questions); // Assuming questions are part of the response
+
+
+            const sanitizedQuestions = data.questions.replace(/```json|```/g, "").trim();
+            const questionsArray = JSON.parse(sanitizedQuestions); // Now parse the 
+
+            setQuestions(questionsArray); // Assuming questions are part of the response
+
+
+
+
+            
+            
+
+
+            
+
+            
+            
+
+
             setLoading(false);
         } catch (error) {
             console.error("Error fetching transcript:", error);
@@ -35,6 +73,8 @@ function YoutubeInput() {
             setLoading(false);
         }
     };
+
+
 
     const handleToggle = (index) => {
         setButtonStates((prevStates) => prevStates.map((state, i) => (i === index ? !state : state)));
@@ -48,9 +88,11 @@ function YoutubeInput() {
                 value={ytLink}
                 onChange={(e) => setytLink(e.target.value)}
             />
+            
             <button className={styles.button} type="button" onClick={generateQuestions} disabled={loading || !ytLink}>
                 {loading ? "Loading..." : "Make Questions"}
             </button>
+            
             {error && <p className={styles.error}>{error}</p>}
 
             <div className={styles.options}>
@@ -79,23 +121,9 @@ function YoutubeInput() {
                 </button>
             </div>
 
-            {transcript && (
-                <div className={styles.transcript}>
-                    <h3>Transcript:</h3>
-                    <p>{transcript}</p>
-                </div>
-            )}
+            
 
-            {questions.length > 0 && (
-                <div className={styles.questions}>
-                    <h3>Generated Questions:</h3>
-                    <ul>
-                        {questions.map((question, index) => (
-                            <li key={index}>{question}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+            
         </div>
     );
 }

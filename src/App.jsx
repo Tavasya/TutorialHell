@@ -1,11 +1,28 @@
-import YoutubeInput from "./components/YoutubeInput"
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Questions from './pages/Questions';
+import { QuestionsProvider } from './context/QuestionsContext';
 
 function App() {
 
   return (
     <>
-      <h1 className="title">Escape from <span className="tut">Tutorial</span> <span className="hell">Hell...</span></h1>
-      <YoutubeInput/>
+      <QuestionsProvider>
+        <Router>
+          
+            <Routes>
+
+              <Route path ="/" element={<Home/>}/>
+              <Route path ="/questions" element={<Questions/>}/>
+
+
+            </Routes>
+          
+        </Router>
+        
+      </QuestionsProvider>
+    
     </>
   )
 }
