@@ -1,29 +1,34 @@
 import React, { useContext } from 'react';
+import QuestionList from '../components/QuestionList';
 import { QuestionsContext } from '../context/QuestionsContext';
 
 function Questions() {
-    const { questions } = useContext(QuestionsContext);
+    const { ytLink } = useContext(QuestionsContext);
+
+    const getEmbedURL = (url) => {
+        const videoID = url.includes("v=") ? url.split("v=")[1].split("&")[0] : null;
+        return videoID ? `https://www.youtube.com/embed/${videoID}` : url;
+    };
+
+    // Determine if the link needs to be converted to embed format
+    const embedUrl = ytLink.includes("embed") ? ytLink : getEmbedURL(ytLink);
 
     return (
-        <div>
-            <h1>Questions</h1>
-            <ul>
-                {questions && questions.length > 0 ? (
-                    questions.map((questionItem, index) => (
-                        <li key={index} style={{ marginBottom: "20px" }}>
-                            <p><strong>Question:</strong> {questionItem.question || "No question text available"}</p>
+        <>
+            <iframe 
+                width="560" 
+                height="315" 
+                src={embedUrl}
+                title="YouTube video player" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+            ></iframe>
 
-            
-
-                            {/* Display the answer if available */}
-                            <p><strong>Answer:</strong> {questionItem.answer || "No answer available"}</p>
-                        </li>
-                    ))
-                ) : (
-                    <p>No questions available</p>
-                )}
-            </ul>
-        </div>
+            <div>
+                <QuestionList/>
+            </div>
+        </>
     );
 }
 

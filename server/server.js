@@ -28,7 +28,7 @@ const generateQuestions = async(transcript, parameters) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
 
-    const prompt = `generate me 3 questions with answers in JSON format based on this transcript: ${singleTranscript} 
+    const prompt = `generate me 3 questions based on the parameters given. If true generate a question like that, if false dont generate a question of that paramenter. If all false, make all true. with answers in JSON format based on this transcript: ${singleTranscript} 
                     using these paramenters: 
                     True or False: ${parameters[0]}
                     Multiple Choice: ${parameters[1]}

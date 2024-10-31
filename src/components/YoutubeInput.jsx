@@ -9,8 +9,8 @@ import { QuestionsContext } from "../context/QuestionsContext";
 
 function YoutubeInput() {
     const navigate = useNavigate();
-    const [ytLink, setytLink] = useState("");
-    const [ transcript, setTranscript] = useState(null);
+    const { ytLink, setytLink } = useContext(QuestionsContext);
+    const [ transcript, setTranscript ] = useState(null);
     const { questions, setQuestions } = useContext(QuestionsContext);
     const [buttonStates, setButtonStates] = useState([false, false, false]);
     const [loading, setLoading] = useState(false);
